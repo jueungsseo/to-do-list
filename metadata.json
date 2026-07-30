@@ -1,0 +1,6 @@
+{
+  "name": "Task Dashboard",
+  "description": "A responsive task management dashboard with to-do lists, progress charts, and team features.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
