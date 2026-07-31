@@ -20,6 +20,7 @@ import { VitalTaskView } from './components/VitalTaskView';
 import { TaskCategoriesView } from './components/TaskCategoriesView';
 import { SettingsView } from './components/SettingsView';
 import { HelpView } from './components/HelpView';
+import { SignUp } from './components/SignUp';
 
 export default function App() {
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
@@ -363,6 +364,8 @@ export default function App() {
               onToggleVital={handleToggleVital}
             />
           )}
+
+          {activeTab === 'signup' && <SignUp />}
 
           {activeTab === 'settings' && (
             <SettingsView

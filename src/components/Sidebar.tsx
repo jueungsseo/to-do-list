@@ -4,6 +4,7 @@ import {
   AlertCircle, 
   CheckSquare, 
   Layers, 
+  UserPlus,
   Settings, 
   HelpCircle, 
   LogOut,
@@ -31,6 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'vital' as NavTab, label: 'Vital Task', icon: AlertCircle },
     { id: 'my-task' as NavTab, label: 'My Task', icon: CheckSquare },
     { id: 'categories' as NavTab, label: 'Task Categories', icon: Layers },
+    { id: 'signup' as NavTab, label: 'Sign Up', icon: UserPlus },
     { id: 'settings' as NavTab, label: 'Settings', icon: Settings },
     { id: 'help' as NavTab, label: 'Help', icon: HelpCircle },
   ];

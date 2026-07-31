@@ -39,4 +39,4 @@ export interface UserProfile {
   avatarUrl: string;
 }
 
-export type NavTab = 'dashboard' | 'vital' | 'my-task' | 'categories' | 'settings' | 'help';
+export type NavTab = 'dashboard' | 'vital' | 'my-task' | 'categories' | 'signup' | 'settings' | 'help';
