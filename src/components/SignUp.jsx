@@ -33,7 +33,7 @@ const InputGroup = ({ icon: Icon, name, type = 'text', placeholder, value, onCha
   );
 };
 
-export const SignUp = () => {
+export const SignUp = ({ onOpenSignIn }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [message, setMessage] = useState('');
@@ -171,9 +171,13 @@ export const SignUp = () => {
 
             <p className="text-sm font-medium text-slate-800">
               Already have an account?{' '}
-              <a href="#" className="font-semibold text-[#008FE8] hover:text-[#006EB8]">
+              <button
+                type="button"
+                onClick={onOpenSignIn}
+                className="font-semibold text-[#008FE8] hover:text-[#006EB8]"
+              >
                 Sign In
-              </a>
+              </button>
             </p>
           </form>
         </div>

@@ -21,8 +21,14 @@ import { TaskCategoriesView } from './components/TaskCategoriesView';
 import { SettingsView } from './components/SettingsView';
 import { HelpView } from './components/HelpView';
 import { SignUp } from './components/SignUp';
+import { Login } from './components/Login';
+
+const AUTH_STORAGE_KEY = 'todo-app-authenticated';
 
 export default function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    () => localStorage.getItem(AUTH_STORAGE_KEY) === 'true'
+  );
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [userProfile, setUserProfile] = useState<UserProfile>(initialUserProfile);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeamMembers);
@@ -110,6 +116,28 @@ export default function App() {
 
   const unreadNotificationCount = notifications.filter((n) => !n.read).length;
 
+  const handleLogin = () => {
+    localStorage.setItem(AUTH_STORAGE_KEY, 'true');
+    setIsAuthenticated(true);
+    setActiveTab('dashboard');
+  };
+
+  const handleLogout = () => {
+    localStorage.removeItem(AUTH_STORAGE_KEY);
+    setIsAuthenticated(false);
+    setActiveTab('dashboard');
+    setSearchQuery('');
+    setIsMobileSidebarOpen(false);
+  };
+
+  if (!isAuthenticated) {
+    return activeTab === 'signup' ? (
+      <SignUp onOpenSignIn={() => setActiveTab('dashboard')} />
+    ) : (
+      <Login onLogin={handleLogin} onOpenSignUp={() => setActiveTab('signup')} />
+    );
+  }
+
   return (
     <div
       className={`min-h-screen transition-all duration-300 font-sans ${
@@ -152,6 +180,7 @@ export default function App() {
           userProfile={userProfile}
           isOpenMobile={isMobileSidebarOpen}
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
+          onLogout={handleLogout}
         />
 
         {/* Main Content Viewport */}
@@ -365,7 +394,7 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'signup' && <SignUp />}
+          {activeTab === 'signup' && <SignUp onOpenSignIn={() => setActiveTab('dashboard')} />}
 
           {activeTab === 'settings' && (
             <SettingsView

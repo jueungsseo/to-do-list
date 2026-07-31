@@ -18,6 +18,7 @@ interface SidebarProps {
   userProfile: UserProfile;
   isOpenMobile?: boolean;
   onCloseMobile?: () => void;
+  onLogout?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -26,6 +27,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   userProfile,
   isOpenMobile = false,
   onCloseMobile,
+  onLogout,
 }) => {
   const menuItems = [
     { id: 'dashboard' as NavTab, label: 'Dashboard', icon: LayoutGrid },
@@ -107,7 +109,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Logout Button */}
       <div className="p-4 mt-6">
         <button
-          onClick={() => alert('Logged out successfully')}
+          onClick={onLogout}
           className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 hover:text-[#FF5F5E] rounded-2xl transition-colors hover:bg-white/60"
         >
           <LogOut className="w-5 h-5 text-slate-500 hover:text-[#FF5F5E]" />
