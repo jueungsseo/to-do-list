@@ -4,7 +4,6 @@ import {
   AlertCircle, 
   CheckSquare, 
   Layers, 
-  UserPlus,
   Settings, 
   HelpCircle, 
   LogOut,
@@ -34,7 +33,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     { id: 'vital' as NavTab, label: '중요 할 일', icon: AlertCircle },
     { id: 'my-task' as NavTab, label: '내 할 일', icon: CheckSquare },
     { id: 'categories' as NavTab, label: '카테고리', icon: Layers },
-    { id: 'signup' as NavTab, label: '회원가입', icon: UserPlus },
     { id: 'settings' as NavTab, label: '설정', icon: Settings },
     { id: 'help' as NavTab, label: '도움말', icon: HelpCircle },
   ];

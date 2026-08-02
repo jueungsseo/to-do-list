@@ -474,8 +474,6 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'signup' && <SignUp onOpenSignIn={() => setActiveTab('dashboard')} />}
-
           {activeTab === 'settings' && (
             <SettingsView
               userProfile={userProfile}
