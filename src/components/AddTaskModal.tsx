@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { X, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { CalendarDays, UploadCloud, X, Image as ImageIcon, Sparkles } from 'lucide-react';
 import { Task, Priority, TaskStatus, TaskCategory } from '../types';
 
 interface AddTaskModalProps {
@@ -40,6 +40,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+  const [dueDate, setDueDate] = useState('');
   const [priority, setPriority] = useState<Priority>('Moderate');
   const [status, setStatus] = useState<TaskStatus>('Not Started');
   const [category, setCategory] = useState<TaskCategory>('Work');
@@ -50,6 +51,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     if (taskToEdit) {
       setTitle(taskToEdit.title);
       setDescription(taskToEdit.description);
+      setDueDate(taskToEdit.dueDate || '');
       setPriority(taskToEdit.priority);
       setStatus(taskToEdit.status);
       setCategory(taskToEdit.category);
@@ -58,6 +60,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     } else {
       setTitle('');
       setDescription('');
+      setDueDate('');
       setPriority('Moderate');
       setStatus('Not Started');
       setCategory('Work');
@@ -76,6 +79,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
       id: taskToEdit?.id,
       title: title.trim(),
       description: description.trim(),
+      dueDate: dueDate || undefined,
       priority,
       status,
       category,
@@ -86,9 +90,22 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     onClose();
   };
 
+  const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result === 'string') {
+        setImageUrl(reader.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/40 backdrop-blur-xs">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-slate-100 overflow-hidden relative max-h-[90vh] flex flex-col">
+      <div className="bg-white rounded-3xl max-w-3xl w-full p-6 shadow-2xl border border-slate-100 overflow-hidden relative max-h-[90vh] flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
@@ -119,18 +136,62 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             />
           </div>
 
-          {/* Description */}
+          {/* Schedule Date */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Description
+              Date
             </label>
-            <textarea
-              rows={3}
-              placeholder="Provide details about the task, location, or time..."
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/30 resize-none"
-            />
+            <div className="relative">
+              <input
+                type="date"
+                value={dueDate}
+                onChange={(e) => setDueDate(e.target.value)}
+                className="w-full px-3.5 py-2.5 pr-10 rounded-xl border border-slate-200 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/30"
+              />
+              <CalendarDays className="pointer-events-none absolute right-3 top-2.5 w-4 h-4 text-slate-400" />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-[minmax(0,1fr)_220px] gap-4">
+            {/* Description */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Task Description
+              </label>
+              <textarea
+                rows={8}
+                placeholder="Start writing here..."
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                className="w-full h-48 px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/30 resize-none"
+              />
+            </div>
+
+            {/* Upload Image */}
+            <div>
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
+                Upload Image
+              </label>
+              <label className="flex h-48 cursor-pointer flex-col items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-center transition hover:border-[#FF5F5E]/50 hover:bg-[#FF5F5E]/5">
+                {imageUrl ? (
+                  <img
+                    src={imageUrl}
+                    alt="Selected task"
+                    className="h-full w-full rounded-xl object-cover"
+                  />
+                ) : (
+                  <div className="flex flex-col items-center gap-2 px-4 text-slate-400">
+                    <UploadCloud className="w-10 h-10" />
+                    <span className="text-xs font-medium">Drag & drop files here</span>
+                    <span className="text-[11px]">or</span>
+                    <span className="rounded-lg border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-500">
+                      Browse
+                    </span>
+                  </div>
+                )}
+                <input type="file" accept="image/*" onChange={handleImageUpload} className="sr-only" />
+              </label>
+            </div>
           </div>
 
           {/* Priority & Status */}

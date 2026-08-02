@@ -10,6 +10,7 @@ export interface Task {
   status: TaskStatus;
   category: TaskCategory;
   createdOn: string; // e.g. "20/06/2023"
+  dueDate?: string;
   completedOn?: string;
   timeAgo?: string;
   imageUrl?: string;

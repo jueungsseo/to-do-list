@@ -214,7 +214,11 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             </div>
 
             <div className="text-slate-400">
-              {task.timeAgo ? task.timeAgo : `Created on: ${task.createdOn}`}
+              {task.timeAgo
+                ? task.timeAgo
+                : task.dueDate
+                  ? `Scheduled for: ${new Date(`${task.dueDate}T00:00:00`).toLocaleDateString('en-GB')}`
+                  : `Created on: ${task.createdOn}`}
             </div>
           </div>
         </div>
