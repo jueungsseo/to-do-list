@@ -227,7 +227,7 @@ export default function App() {
       style={
         showDeskFrame
           ? {
-              backgroundImage: `linear-gradient(rgba(15, 23, 42, 0.45), rgba(15, 23, 42, 0.45)), url('https://images.unsplash.com/photo-1517842645767-c639042777db?auto=format&fit=crop&w=1920&q=80')`,
+              backgroundImage: 'linear-gradient(135deg, #2F2930 0%, #5A4540 52%, #2B3340 100%)',
               backgroundSize: 'cover',
               backgroundPosition: 'center',
             }
