@@ -53,7 +53,7 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
     setIsSubmitting(true);
     setMessage('');
 
-    const { error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase.auth.signInWithPassword({
       email: formData.email.trim(),
       password: formData.password,
     });
@@ -65,7 +65,7 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
       return;
     }
 
-    onLogin({ rememberMe });
+    onLogin({ rememberMe, user: data.user });
   };
 
   return (

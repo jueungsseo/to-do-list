@@ -23,6 +23,7 @@ import { HelpView } from './components/HelpView';
 import { SignUp } from './components/SignUp';
 import { Login } from './components/Login';
 import { supabase } from './lib/supabaseClient';
+import type { User } from '@supabase/supabase-js';
 
 const DEFAULT_AVATAR_URL =
   'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80';
@@ -47,7 +48,7 @@ export default function App() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
-  const syncUserProfile = async (user: any) => {
+  const syncUserProfile = async (user: User | null) => {
     if (!user) {
       setUserProfile(initialUserProfile);
       return;
@@ -86,10 +87,10 @@ export default function App() {
       return;
     }
 
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(async ({ data }) => {
       setIsAuthenticated(Boolean(data.session));
       if (data.session?.user) {
-        syncUserProfile(data.session.user);
+        await syncUserProfile(data.session.user);
       }
       setIsAuthLoading(false);
     });
@@ -178,8 +179,11 @@ export default function App() {
 
   const unreadNotificationCount = notifications.filter((n) => !n.read).length;
 
-  const handleLogin = () => {
+  const handleLogin = async ({ user }: { user?: User | null } = {}) => {
     setIsAuthenticated(true);
+    if (user) {
+      await syncUserProfile(user);
+    }
     setActiveTab('dashboard');
   };
 
