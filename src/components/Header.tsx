@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Search, Bell, Calendar as CalendarIcon, Menu, Monitor, Maximize2 } from 'lucide-react';
 
 interface HeaderProps {
@@ -22,6 +22,22 @@ export const Header: React.FC<HeaderProps> = ({
   setShowDeskFrame,
   unreadCount,
 }) => {
+  const [currentDateTime, setCurrentDateTime] = useState(() => new Date());
+  const weekday = currentDateTime.toLocaleDateString('en-US', { weekday: 'long' });
+  const formattedDate = currentDateTime.toLocaleDateString('en-GB');
+  const formattedTime = currentDateTime.toLocaleTimeString('en-US', {
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      setCurrentDateTime(new Date());
+    }, 1000);
+
+    return () => window.clearInterval(timer);
+  }, []);
+
   return (
     <header className="flex flex-col md:flex-row items-center justify-between gap-4 pb-6 pt-2">
       {/* Search Bar & Mobile Toggle */}
@@ -100,9 +116,9 @@ export const Header: React.FC<HeaderProps> = ({
 
         {/* Date Display */}
         <div className="text-right pl-2 border-l border-slate-200">
-          <p className="text-sm font-semibold text-slate-800 leading-none">Tuesday</p>
+          <p className="text-sm font-semibold text-slate-800 leading-none">{weekday}</p>
           <p className="text-xs font-semibold text-[#00A3FF] mt-1 tracking-tight">
-            20/06/2023
+            {formattedDate} · {formattedTime}
           </p>
         </div>
       </div>

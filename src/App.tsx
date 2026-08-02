@@ -180,6 +180,10 @@ export default function App() {
   const completedTasks = searchFilteredTasks.filter((t) => t.status === 'Completed');
 
   const unreadNotificationCount = notifications.filter((n) => !n.read).length;
+  const todayLabel = new Date().toLocaleDateString('en-US', {
+    day: 'numeric',
+    month: 'long',
+  });
 
   const handleLogin = async ({ user }: { user?: User | null } = {}) => {
     setIsAuthenticated(true);
@@ -330,7 +334,7 @@ export default function App() {
 
                   {/* Subheader Date */}
                   <div className="text-xs font-medium text-slate-400">
-                    20 June <span className="text-slate-300">•</span> Today
+                    {todayLabel} <span className="text-slate-300">•</span> Today
                   </div>
 
                   {/* To-Do Task Cards List */}
