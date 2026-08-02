@@ -24,6 +24,9 @@ import { SignUp } from './components/SignUp';
 import { Login } from './components/Login';
 import { supabase } from './lib/supabaseClient';
 
+const DEFAULT_AVATAR_URL =
+  'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80';
+
 export default function App() {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -44,6 +47,39 @@ export default function App() {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
 
+  const syncUserProfile = async (user: any) => {
+    if (!user) {
+      setUserProfile(initialUserProfile);
+      return;
+    }
+
+    const metadata = user.user_metadata || {};
+    let profile = null;
+
+    if (supabase) {
+      const { data } = await supabase
+        .from('profiles')
+        .select('first_name, last_name, username, email')
+        .eq('id', user.id)
+        .maybeSingle();
+
+      profile = data;
+    }
+
+    const firstName = profile?.first_name || metadata.first_name || '';
+    const lastName = profile?.last_name || metadata.last_name || '';
+    const username = profile?.username || metadata.username || '';
+    const email = profile?.email || user.email || '';
+    const displayName =
+      [firstName, lastName].filter(Boolean).join(' ') || username || email || 'Dashboard User';
+
+    setUserProfile({
+      name: displayName,
+      email,
+      avatarUrl: metadata.avatar_url || DEFAULT_AVATAR_URL,
+    });
+  };
+
   useEffect(() => {
     if (!supabase) {
       setIsAuthLoading(false);
@@ -52,6 +88,9 @@ export default function App() {
 
     supabase.auth.getSession().then(({ data }) => {
       setIsAuthenticated(Boolean(data.session));
+      if (data.session?.user) {
+        syncUserProfile(data.session.user);
+      }
       setIsAuthLoading(false);
     });
 
@@ -59,6 +98,11 @@ export default function App() {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(Boolean(session));
+      if (session?.user) {
+        syncUserProfile(session.user);
+      } else {
+        setUserProfile(initialUserProfile);
+      }
     });
 
     return () => subscription.unsubscribe();
@@ -145,6 +189,7 @@ export default function App() {
     }
 
     setIsAuthenticated(false);
+    setUserProfile(initialUserProfile);
     setActiveTab('dashboard');
     setSearchQuery('');
     setIsMobileSidebarOpen(false);
