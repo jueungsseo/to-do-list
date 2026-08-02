@@ -8,6 +8,7 @@ interface TaskCardProps {
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
   onToggleVital: (taskId: string) => void;
+  onOpenTask?: (task: Task) => void;
 }
 
 const statusLabel: Record<TaskStatus, string> = {
@@ -29,6 +30,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
   onEditTask,
   onDeleteTask,
   onToggleVital,
+  onOpenTask,
 }) => {
   const [showMenu, setShowMenu] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -96,9 +98,15 @@ export const TaskCard: React.FC<TaskCardProps> = ({
         {/* Card Main Body */}
         <div className="flex-1 min-w-0">
           <div className="flex items-start justify-between gap-2">
-            <h3 className="text-base font-bold text-slate-900 leading-snug truncate pr-2">
+            <button
+              type="button"
+              onClick={() => onOpenTask?.(task)}
+              className="min-w-0 truncate pr-2 text-left text-base font-bold leading-snug text-slate-900 transition-colors hover:text-[#FF5F5E] disabled:cursor-default disabled:hover:text-slate-900"
+              disabled={!onOpenTask}
+              title={onOpenTask ? '상세 보기' : undefined}
+            >
               {task.title}
-            </h3>
+            </button>
 
             {/* Menu Dropdown Trigger */}
             <div className="relative" ref={menuRef}>

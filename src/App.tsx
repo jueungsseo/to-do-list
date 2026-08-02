@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { ClipboardList, CheckSquare, Plus } from 'lucide-react';
 import {
-  initialTasks,
   initialUserProfile,
   initialTeamMembers,
   initialNotifications,
@@ -20,6 +19,7 @@ import { VitalTaskView } from './components/VitalTaskView';
 import { TaskCategoriesView } from './components/TaskCategoriesView';
 import { SettingsView } from './components/SettingsView';
 import { HelpView } from './components/HelpView';
+import { TaskDetailView } from './components/TaskDetailView';
 import { SignUp } from './components/SignUp';
 import { Login } from './components/Login';
 import { supabase } from './lib/supabaseClient';
@@ -92,6 +92,7 @@ export default function App() {
   // Modals & Popovers
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [newTaskDueDate, setNewTaskDueDate] = useState('');
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
@@ -298,6 +299,7 @@ export default function App() {
     }
 
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
+    setSelectedTaskId((prev) => (prev === taskId ? null : prev));
   };
 
   const handleToggleVital = async (taskId: string) => {
@@ -350,6 +352,9 @@ export default function App() {
   const todoTasks = searchFilteredTasks.filter((t) => t.status !== 'Completed');
   // Completed tasks
   const completedTasks = searchFilteredTasks.filter((t) => t.status === 'Completed');
+  const selectedTask = selectedTaskId
+    ? tasks.find((task) => task.id === selectedTaskId) || null
+    : null;
 
   const unreadNotificationCount = notifications.filter((n) => !n.read).length;
   const todayLabel = new Date().toLocaleDateString('ko-KR', {
@@ -376,6 +381,7 @@ export default function App() {
     setCurrentUser(null);
     setUserProfile(initialUserProfile);
     setTasks([]);
+    setSelectedTaskId(null);
     setActiveTab('dashboard');
     setSearchQuery('');
     setIsMobileSidebarOpen(false);
@@ -425,7 +431,10 @@ export default function App() {
         {/* Sidebar */}
         <Sidebar
           activeTab={activeTab}
-          setActiveTab={setActiveTab}
+          setActiveTab={(tab) => {
+            setSelectedTaskId(null);
+            setActiveTab(tab);
+          }}
           userProfile={userProfile}
           isOpenMobile={isMobileSidebarOpen}
           onCloseMobile={() => setIsMobileSidebarOpen(false)}
@@ -474,7 +483,21 @@ export default function App() {
           />
 
           {/* Tab Views */}
-          {activeTab === 'dashboard' && (
+          {selectedTask && (
+            <TaskDetailView
+              task={selectedTask}
+              onGoBack={() => setSelectedTaskId(null)}
+              onUpdateStatus={handleUpdateStatus}
+              onEditTask={(task) => {
+                setTaskToEdit(task);
+                setIsAddTaskOpen(true);
+              }}
+              onDeleteTask={handleDeleteTask}
+              onToggleVital={handleToggleVital}
+            />
+          )}
+
+          {!selectedTask && activeTab === 'dashboard' && (
             <div className="space-y-6 flex-1">
               {/* Welcome Greeting & Team */}
               <GreetingSection
@@ -531,6 +554,7 @@ export default function App() {
                           }}
                           onDeleteTask={handleDeleteTask}
                           onToggleVital={handleToggleVital}
+                          onOpenTask={(task) => setSelectedTaskId(task.id)}
                         />
                       ))}
                     </div>
@@ -571,6 +595,7 @@ export default function App() {
                             }}
                             onDeleteTask={handleDeleteTask}
                             onToggleVital={handleToggleVital}
+                            onOpenTask={(task) => setSelectedTaskId(task.id)}
                           />
                         ))}
                       </div>
@@ -581,7 +606,7 @@ export default function App() {
             </div>
           )}
 
-          {activeTab === 'vital' && (
+          {!selectedTask && activeTab === 'vital' && (
             <VitalTaskView
               tasks={searchFilteredTasks}
               onUpdateStatus={handleUpdateStatus}
@@ -591,6 +616,7 @@ export default function App() {
               }}
               onDeleteTask={handleDeleteTask}
               onToggleVital={handleToggleVital}
+              onOpenTask={(task) => setSelectedTaskId(task.id)}
               onOpenAddTask={() => {
                 setTaskToEdit(null);
                 setIsAddTaskOpen(true);
@@ -598,7 +624,7 @@ export default function App() {
             />
           )}
 
-          {activeTab === 'my-task' && (
+          {!selectedTask && activeTab === 'my-task' && (
             <div className="space-y-6 animate-in fade-in duration-200">
               <div className="flex items-center justify-between">
                 <div>
@@ -631,13 +657,14 @@ export default function App() {
                     }}
                     onDeleteTask={handleDeleteTask}
                     onToggleVital={handleToggleVital}
+                    onOpenTask={(task) => setSelectedTaskId(task.id)}
                   />
                 ))}
               </div>
             </div>
           )}
 
-          {activeTab === 'categories' && (
+          {!selectedTask && activeTab === 'categories' && (
             <TaskCategoriesView
               tasks={searchFilteredTasks}
               onUpdateStatus={handleUpdateStatus}
@@ -647,17 +674,18 @@ export default function App() {
               }}
               onDeleteTask={handleDeleteTask}
               onToggleVital={handleToggleVital}
+              onOpenTask={(task) => setSelectedTaskId(task.id)}
             />
           )}
 
-          {activeTab === 'settings' && (
+          {!selectedTask && activeTab === 'settings' && (
             <SettingsView
               userProfile={userProfile}
               setUserProfile={setUserProfile}
             />
           )}
 
-          {activeTab === 'help' && <HelpView />}
+          {!selectedTask && activeTab === 'help' && <HelpView />}
         </main>
       </div>
 

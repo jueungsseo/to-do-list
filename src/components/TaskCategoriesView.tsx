@@ -9,6 +9,7 @@ interface TaskCategoriesViewProps {
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
   onToggleVital: (taskId: string) => void;
+  onOpenTask: (task: Task) => void;
 }
 
 export const TaskCategoriesView: React.FC<TaskCategoriesViewProps> = ({
@@ -17,6 +18,7 @@ export const TaskCategoriesView: React.FC<TaskCategoriesViewProps> = ({
   onEditTask,
   onDeleteTask,
   onToggleVital,
+  onOpenTask,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<TaskCategory | 'All'>('All');
   const categoryLabels: Record<TaskCategory, string> = {
@@ -110,6 +112,7 @@ export const TaskCategoriesView: React.FC<TaskCategoriesViewProps> = ({
               onEditTask={onEditTask}
               onDeleteTask={onDeleteTask}
               onToggleVital={onToggleVital}
+              onOpenTask={onOpenTask}
             />
           ))}
         </div>

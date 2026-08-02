@@ -9,6 +9,7 @@ interface VitalTaskViewProps {
   onEditTask: (task: Task) => void;
   onDeleteTask: (taskId: string) => void;
   onToggleVital: (taskId: string) => void;
+  onOpenTask: (task: Task) => void;
   onOpenAddTask: () => void;
 }
 
@@ -18,6 +19,7 @@ export const VitalTaskView: React.FC<VitalTaskViewProps> = ({
   onEditTask,
   onDeleteTask,
   onToggleVital,
+  onOpenTask,
   onOpenAddTask,
 }) => {
   const vitalTasks = tasks.filter((t) => t.isVital || t.priority === 'Vital' || t.priority === 'High');
@@ -60,6 +62,7 @@ export const VitalTaskView: React.FC<VitalTaskViewProps> = ({
               onEditTask={onEditTask}
               onDeleteTask={onDeleteTask}
               onToggleVital={onToggleVital}
+              onOpenTask={onOpenTask}
             />
           ))}
         </div>
