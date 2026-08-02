@@ -7,6 +7,7 @@ import {
   UserRoundPlus,
   Users,
 } from 'lucide-react';
+import { isSupabaseConfigured, supabase } from '../lib/supabaseClient';
 
 const initialFormData = {
   firstName: '',
@@ -37,6 +38,7 @@ export const SignUp = ({ onOpenSignIn }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [agreedToTerms, setAgreedToTerms] = useState(false);
   const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -46,10 +48,9 @@ export const SignUp = ({ onOpenSignIn }) => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Simple client-side validation before the app is connected to a backend.
     if (formData.password !== formData.confirmPassword) {
       setMessage('Passwords do not match.');
       return;
@@ -60,7 +61,54 @@ export const SignUp = ({ onOpenSignIn }) => {
       return;
     }
 
-    setMessage('Registration form is ready to submit.');
+    if (!isSupabaseConfigured || !supabase) {
+      setMessage('Supabase environment variables are not configured.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setMessage('');
+
+    const { data, error } = await supabase.auth.signUp({
+      email: formData.email.trim(),
+      password: formData.password,
+      options: {
+        data: {
+          first_name: formData.firstName.trim(),
+          last_name: formData.lastName.trim(),
+          username: formData.username.trim(),
+        },
+      },
+    });
+
+    if (error) {
+      setIsSubmitting(false);
+      setMessage(error.message);
+      return;
+    }
+
+    if (data.user && data.session) {
+      const { error: profileError } = await supabase.from('profiles').upsert({
+        id: data.user.id,
+        first_name: formData.firstName.trim(),
+        last_name: formData.lastName.trim(),
+        username: formData.username.trim(),
+        email: formData.email.trim(),
+      });
+
+      if (profileError) {
+        setIsSubmitting(false);
+        setMessage(profileError.message);
+        return;
+      }
+    }
+
+    setIsSubmitting(false);
+    setMessage(
+      data.session
+        ? 'Registration complete. You can sign in now.'
+        : 'Registration complete. Please check your email, then sign in.'
+    );
   };
 
   return (
@@ -164,9 +212,10 @@ export const SignUp = ({ onOpenSignIn }) => {
 
             <button
               type="submit"
+              disabled={isSubmitting}
               className="rounded-xl bg-[#FF8585] px-9 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#FF5F5E] focus:outline-none focus:ring-4 focus:ring-[#FF5F5E]/25"
             >
-              Register
+              {isSubmitting ? 'Registering...' : 'Register'}
             </button>
 
             <p className="text-sm font-medium text-slate-800">

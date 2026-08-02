@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Check, Facebook, Lock, User, X } from 'lucide-react';
+import { Check, Facebook, Lock, Mail, X } from 'lucide-react';
+import { isSupabaseConfigured, supabase } from '../lib/supabaseClient';
 
 const initialFormData = {
-  username: '',
+  email: '',
   password: '',
 };
 
@@ -26,6 +27,7 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
   const [formData, setFormData] = useState(initialFormData);
   const [rememberMe, setRememberMe] = useState(false);
   const [message, setMessage] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -35,12 +37,31 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
     }));
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
-    // Temporary front-end validation until real authentication is connected.
-    if (!formData.username.trim() || !formData.password.trim()) {
-      setMessage('Please enter your username and password.');
+    if (!formData.email.trim() || !formData.password.trim()) {
+      setMessage('Please enter your email and password.');
+      return;
+    }
+
+    if (!isSupabaseConfigured || !supabase) {
+      setMessage('Supabase environment variables are not configured.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setMessage('');
+
+    const { error } = await supabase.auth.signInWithPassword({
+      email: formData.email.trim(),
+      password: formData.password,
+    });
+
+    setIsSubmitting(false);
+
+    if (error) {
+      setMessage(error.message);
       return;
     }
 
@@ -56,10 +77,11 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
 
             <div className="space-y-5">
               <InputGroup
-                icon={User}
-                name="username"
-                placeholder="Enter Username"
-                value={formData.username}
+                icon={Mail}
+                name="email"
+                type="email"
+                placeholder="Enter Email"
+                value={formData.email}
                 onChange={handleInputChange}
               />
               <InputGroup
@@ -86,9 +108,10 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
 
             <button
               type="submit"
+              disabled={isSubmitting}
               className="rounded-lg bg-[#FF8585] px-10 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#FF5F5E] focus:outline-none focus:ring-4 focus:ring-[#FF5F5E]/25"
             >
-              Login
+              {isSubmitting ? 'Logging in...' : 'Login'}
             </button>
 
             <div className="space-y-3 pt-10">

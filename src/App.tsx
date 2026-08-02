@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { ClipboardList, CheckSquare, Plus } from 'lucide-react';
 import {
   initialTasks,
@@ -22,13 +22,11 @@ import { SettingsView } from './components/SettingsView';
 import { HelpView } from './components/HelpView';
 import { SignUp } from './components/SignUp';
 import { Login } from './components/Login';
-
-const AUTH_STORAGE_KEY = 'todo-app-authenticated';
+import { supabase } from './lib/supabaseClient';
 
 export default function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(
-    () => localStorage.getItem(AUTH_STORAGE_KEY) === 'true'
-  );
+  const [isAuthLoading, setIsAuthLoading] = useState(true);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [tasks, setTasks] = useState<Task[]>(initialTasks);
   const [userProfile, setUserProfile] = useState<UserProfile>(initialUserProfile);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeamMembers);
@@ -45,6 +43,26 @@ export default function App() {
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+
+  useEffect(() => {
+    if (!supabase) {
+      setIsAuthLoading(false);
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data }) => {
+      setIsAuthenticated(Boolean(data.session));
+      setIsAuthLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAuthenticated(Boolean(session));
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Task Handlers
   const handleSaveTask = (taskData: Omit<Task, 'id' | 'createdOn'> & { id?: string }) => {
@@ -117,18 +135,28 @@ export default function App() {
   const unreadNotificationCount = notifications.filter((n) => !n.read).length;
 
   const handleLogin = () => {
-    localStorage.setItem(AUTH_STORAGE_KEY, 'true');
     setIsAuthenticated(true);
     setActiveTab('dashboard');
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem(AUTH_STORAGE_KEY);
+  const handleLogout = async () => {
+    if (supabase) {
+      await supabase.auth.signOut();
+    }
+
     setIsAuthenticated(false);
     setActiveTab('dashboard');
     setSearchQuery('');
     setIsMobileSidebarOpen(false);
   };
+
+  if (isAuthLoading) {
+    return (
+      <div className="grid min-h-screen place-items-center bg-[#FFE8E8] font-sans text-sm font-semibold text-slate-600">
+        Loading...
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
     return activeTab === 'signup' ? (
