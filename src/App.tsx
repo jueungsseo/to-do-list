@@ -43,6 +43,7 @@ export default function App() {
   // Modals & Popovers
   const [isAddTaskOpen, setIsAddTaskOpen] = useState(false);
   const [taskToEdit, setTaskToEdit] = useState<Task | null>(null);
+  const [newTaskDueDate, setNewTaskDueDate] = useState('');
   const [isInviteOpen, setIsInviteOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
@@ -125,6 +126,7 @@ export default function App() {
       };
       setTasks((prev) => [newTask, ...prev]);
     }
+    setNewTaskDueDate('');
   };
 
   const handleUpdateStatus = (taskId: string, newStatus: TaskStatus) => {
@@ -292,6 +294,13 @@ export default function App() {
           <CalendarPanel
             isOpen={isCalendarOpen}
             onClose={() => setIsCalendarOpen(false)}
+            tasks={tasks}
+            onAddSchedule={(date) => {
+              setTaskToEdit(null);
+              setNewTaskDueDate(date);
+              setIsCalendarOpen(false);
+              setIsAddTaskOpen(true);
+            }}
           />
 
           {/* Tab Views */}
@@ -487,9 +496,13 @@ export default function App() {
       {/* Add / Edit Task Modal */}
       <AddTaskModal
         isOpen={isAddTaskOpen}
-        onClose={() => setIsAddTaskOpen(false)}
+        onClose={() => {
+          setIsAddTaskOpen(false);
+          setNewTaskDueDate('');
+        }}
         onSaveTask={handleSaveTask}
         taskToEdit={taskToEdit}
+        initialDueDate={newTaskDueDate}
       />
 
       {/* Team Invite Modal */}

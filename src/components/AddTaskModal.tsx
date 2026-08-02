@@ -7,6 +7,7 @@ interface AddTaskModalProps {
   onClose: () => void;
   onSaveTask: (taskData: Omit<Task, 'id' | 'createdOn'> & { id?: string }) => void;
   taskToEdit?: Task | null;
+  initialDueDate?: string;
 }
 
 const PRESET_IMAGES = [
@@ -37,6 +38,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
   onClose,
   onSaveTask,
   taskToEdit,
+  initialDueDate = '',
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -60,14 +62,14 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
     } else {
       setTitle('');
       setDescription('');
-      setDueDate('');
+      setDueDate(initialDueDate);
       setPriority('Moderate');
       setStatus('Not Started');
       setCategory('Work');
       setImageUrl('');
       setIsVital(false);
     }
-  }, [taskToEdit, isOpen]);
+  }, [taskToEdit, isOpen, initialDueDate]);
 
   if (!isOpen) return null;
 
