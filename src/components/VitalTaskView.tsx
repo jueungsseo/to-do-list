@@ -30,8 +30,8 @@ export const VitalTaskView: React.FC<VitalTaskViewProps> = ({
             <AlertCircle className="w-5 h-5" />
           </div>
           <div>
-            <h2 className="text-xl font-bold text-slate-900">Vital Tasks</h2>
-            <p className="text-xs text-slate-500">High priority and critical items requiring immediate focus.</p>
+            <h2 className="text-xl font-bold text-slate-900">중요 할 일</h2>
+            <p className="text-xs text-slate-500">우선적으로 챙겨야 할 일을 모아봤어요.</p>
           </div>
         </div>
 
@@ -40,15 +40,15 @@ export const VitalTaskView: React.FC<VitalTaskViewProps> = ({
           className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#FF5F5E] rounded-xl hover:bg-[#ff4948] transition-colors shadow-2xs"
         >
           <Plus className="w-4 h-4" />
-          <span>Add Vital Task</span>
+          <span>중요 할 일 추가</span>
         </button>
       </div>
 
       {vitalTasks.length === 0 ? (
         <div className="bg-white rounded-2xl p-10 text-center border border-slate-200/80">
           <AlertCircle className="w-10 h-10 text-slate-300 mx-auto mb-2" />
-          <p className="font-semibold text-slate-700 text-sm">No Vital Tasks Flagged</p>
-          <p className="text-xs text-slate-400 mt-1">Mark tasks as 'Vital' or 'High' priority to view them here.</p>
+          <p className="font-semibold text-slate-700 text-sm">중요 표시된 할 일이 없습니다.</p>
+          <p className="text-xs text-slate-400 mt-1">우선순위를 '중요' 또는 '높음'으로 설정하면 여기에 표시됩니다.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

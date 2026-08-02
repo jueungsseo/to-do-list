@@ -30,13 +30,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onLogout,
 }) => {
   const menuItems = [
-    { id: 'dashboard' as NavTab, label: 'Dashboard', icon: LayoutGrid },
-    { id: 'vital' as NavTab, label: 'Vital Task', icon: AlertCircle },
-    { id: 'my-task' as NavTab, label: 'My Task', icon: CheckSquare },
-    { id: 'categories' as NavTab, label: 'Task Categories', icon: Layers },
-    { id: 'signup' as NavTab, label: 'Sign Up', icon: UserPlus },
-    { id: 'settings' as NavTab, label: 'Settings', icon: Settings },
-    { id: 'help' as NavTab, label: 'Help', icon: HelpCircle },
+    { id: 'dashboard' as NavTab, label: '대시보드', icon: LayoutGrid },
+    { id: 'vital' as NavTab, label: '중요 할 일', icon: AlertCircle },
+    { id: 'my-task' as NavTab, label: '내 할 일', icon: CheckSquare },
+    { id: 'categories' as NavTab, label: '카테고리', icon: Layers },
+    { id: 'signup' as NavTab, label: '회원가입', icon: UserPlus },
+    { id: 'settings' as NavTab, label: '설정', icon: Settings },
+    { id: 'help' as NavTab, label: '도움말', icon: HelpCircle },
   ];
 
   const sidebarContent = (
@@ -45,8 +45,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Logo */}
         <div className="px-6 pt-6 pb-5 flex items-center justify-between">
           <div className="text-2xl font-bold tracking-tight">
-            <span className="text-[#FF5F5E]">Dash</span>
-            <span className="text-slate-900">board</span>
+            <span className="text-[#FF5F5E]">투두</span>
+            <span className="text-slate-900">리스트</span>
           </div>
           {isOpenMobile && (
             <button 
@@ -113,7 +113,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium text-slate-600 hover:text-[#FF5F5E] rounded-2xl transition-colors hover:bg-white/60"
         >
           <LogOut className="w-5 h-5 text-slate-500 hover:text-[#FF5F5E]" />
-          <span>Logout</span>
+          <span>로그아웃</span>
         </button>
       </div>
     </div>

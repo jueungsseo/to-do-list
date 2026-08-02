@@ -73,7 +73,7 @@ export default function App() {
     const username = profile?.username || metadata.username || '';
     const email = profile?.email || user.email || '';
     const displayName =
-      [firstName, lastName].filter(Boolean).join(' ') || username || email || 'Dashboard User';
+      [firstName, lastName].filter(Boolean).join(' ') || username || email || '사용자';
 
     setUserProfile({
       name: displayName,
@@ -137,7 +137,7 @@ export default function App() {
             ...t,
             status: newStatus,
             completedOn: newStatus === 'Completed' ? new Date().toLocaleDateString('en-GB') : undefined,
-            timeAgo: newStatus === 'Completed' ? 'Completed just now.' : undefined,
+            timeAgo: newStatus === 'Completed' ? '방금 완료했습니다.' : undefined,
           };
         }
         return t;
@@ -180,7 +180,7 @@ export default function App() {
   const completedTasks = searchFilteredTasks.filter((t) => t.status === 'Completed');
 
   const unreadNotificationCount = notifications.filter((n) => !n.read).length;
-  const todayLabel = new Date().toLocaleDateString('en-US', {
+  const todayLabel = new Date().toLocaleDateString('ko-KR', {
     day: 'numeric',
     month: 'long',
   });
@@ -208,7 +208,7 @@ export default function App() {
   if (isAuthLoading) {
     return (
       <div className="grid min-h-screen place-items-center bg-[#FFE8E8] font-sans text-sm font-semibold text-slate-600">
-        Loading...
+        불러오는 중...
       </div>
     );
   }
@@ -317,7 +317,7 @@ export default function App() {
                       <div className="p-1.5 rounded-lg bg-[#FF5F5E]/10 text-[#FF5F5E]">
                         <ClipboardList className="w-4 h-4" />
                       </div>
-                      <h2 className="text-base font-bold text-[#FF5F5E]">To-Do</h2>
+                      <h2 className="text-base font-bold text-[#FF5F5E]">할 일</h2>
                     </div>
 
                     <button
@@ -328,19 +328,19 @@ export default function App() {
                       className="flex items-center gap-1 text-xs font-semibold text-slate-500 hover:text-[#FF5F5E] transition-colors"
                     >
                       <Plus className="w-3.5 h-3.5" />
-                      <span>Add task</span>
+                      <span>할 일 추가</span>
                     </button>
                   </div>
 
                   {/* Subheader Date */}
                   <div className="text-xs font-medium text-slate-400">
-                    {todayLabel} <span className="text-slate-300">•</span> Today
+                    {todayLabel} <span className="text-slate-300">•</span> 오늘
                   </div>
 
                   {/* To-Do Task Cards List */}
                   {todoTasks.length === 0 ? (
                     <div className="py-10 text-center text-slate-400 text-xs">
-                      No pending tasks found. All caught up!
+                      아직 해야 할 일이 없습니다.
                     </div>
                   ) : (
                     <div className="space-y-3.5">
@@ -373,14 +373,14 @@ export default function App() {
                         <CheckSquare className="w-4 h-4" />
                       </div>
                       <h2 className="text-base font-bold text-[#FF5F5E]">
-                        Completed Task
+                        완료한 일
                       </h2>
                     </div>
 
                     {/* Completed Task Cards List */}
                     {completedTasks.length === 0 ? (
                       <div className="py-8 text-center text-slate-400 text-xs">
-                        No completed tasks yet.
+                        완료한 일이 아직 없습니다.
                       </div>
                     ) : (
                       <div className="space-y-3.5">
@@ -426,9 +426,9 @@ export default function App() {
             <div className="space-y-6 animate-in fade-in duration-200">
               <div className="flex items-center justify-between">
                 <div>
-                  <h2 className="text-xl font-bold text-slate-900">My Tasks</h2>
+                  <h2 className="text-xl font-bold text-slate-900">내 할 일</h2>
                   <p className="text-xs text-slate-500">
-                    All tasks assigned to you across projects ({searchFilteredTasks.length}).
+                    등록된 할 일을 한눈에 확인하세요. ({searchFilteredTasks.length}개)
                   </p>
                 </div>
                 <button
@@ -439,7 +439,7 @@ export default function App() {
                   className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-[#FF5F5E] rounded-xl hover:bg-[#ff4948] transition-colors shadow-2xs"
                 >
                   <Plus className="w-4 h-4" />
-                  <span>Add Task</span>
+                  <span>할 일 추가</span>
                 </button>
               </div>
 

@@ -23,9 +23,9 @@ export const Header: React.FC<HeaderProps> = ({
   unreadCount,
 }) => {
   const [currentDateTime, setCurrentDateTime] = useState(() => new Date());
-  const weekday = currentDateTime.toLocaleDateString('en-US', { weekday: 'long' });
-  const formattedDate = currentDateTime.toLocaleDateString('en-GB');
-  const formattedTime = currentDateTime.toLocaleTimeString('en-US', {
+  const weekday = currentDateTime.toLocaleDateString('ko-KR', { weekday: 'long' });
+  const formattedDate = currentDateTime.toLocaleDateString('ko-KR');
+  const formattedTime = currentDateTime.toLocaleTimeString('ko-KR', {
     hour: '2-digit',
     minute: '2-digit',
   });
@@ -53,14 +53,14 @@ export const Header: React.FC<HeaderProps> = ({
         <div className="relative flex-1 flex items-center">
           <input
             type="text"
-            placeholder="Search your task here..."
+            placeholder="할 일을 검색해보세요..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full pl-4 pr-12 py-2.5 rounded-xl bg-white text-slate-800 text-sm placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/20 shadow-2xs border border-transparent"
           />
           <button
             className="absolute right-1 p-2 bg-[#FF5F5E] text-white rounded-lg hover:bg-[#ff4948] transition-colors"
-            aria-label="Search"
+            aria-label="검색"
           >
             <Search className="w-4 h-4" />
           </button>
@@ -75,7 +75,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onOpenNotifications}
             className="relative p-2.5 bg-[#FF5F5E] text-white rounded-xl hover:bg-[#ff4a49] transition-colors shadow-2xs"
-            title="Notifications"
+            title="알림"
           >
             <Bell className="w-5 h-5" />
             {unreadCount > 0 && (
@@ -89,7 +89,7 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={onOpenCalendar}
             className="p-2.5 bg-[#FF5F5E] text-white rounded-xl hover:bg-[#ff4a49] transition-colors shadow-2xs"
-            title="Calendar"
+            title="달력"
           >
             <CalendarIcon className="w-5 h-5" />
           </button>
@@ -98,17 +98,17 @@ export const Header: React.FC<HeaderProps> = ({
           <button
             onClick={() => setShowDeskFrame(!showDeskFrame)}
             className="hidden sm:flex items-center gap-1.5 px-3 py-2 bg-white text-slate-700 text-xs font-medium rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors shadow-2xs"
-            title="Toggle Desk Backdrop View"
+            title="배경 보기 전환"
           >
             {showDeskFrame ? (
               <>
                 <Maximize2 className="w-3.5 h-3.5 text-[#FF5F5E]" />
-                <span>Clean View</span>
+                <span>깔끔한 보기</span>
               </>
             ) : (
               <>
                 <Monitor className="w-3.5 h-3.5 text-[#FF5F5E]" />
-                <span>Desk View</span>
+                <span>배경 보기</span>
               </>
             )}
           </button>

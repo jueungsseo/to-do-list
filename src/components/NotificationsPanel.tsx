@@ -22,7 +22,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
       <div className="flex items-center justify-between pb-3 border-b border-slate-100">
         <div className="flex items-center gap-2">
           <Bell className="w-4 h-4 text-[#FF5F5E]" />
-          <h3 className="font-bold text-slate-800 text-sm">Notifications</h3>
+          <h3 className="font-bold text-slate-800 text-sm">알림</h3>
         </div>
         <div className="flex items-center gap-2">
           <button
@@ -30,7 +30,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
             className="text-[11px] text-[#FF5F5E] hover:underline font-medium flex items-center gap-1"
           >
             <CheckCheck className="w-3 h-3" />
-            <span>Mark all read</span>
+            <span>모두 읽음</span>
           </button>
           <button
             onClick={onClose}
@@ -44,7 +44,7 @@ export const NotificationsPanel: React.FC<NotificationsPanelProps> = ({
       <div className="space-y-2 mt-3 max-h-72 overflow-y-auto pr-1">
         {notifications.length === 0 ? (
           <p className="text-xs text-slate-400 text-center py-6">
-            No notifications available.
+            새 알림이 없습니다.
           </p>
         ) : (
           notifications.map((item) => (

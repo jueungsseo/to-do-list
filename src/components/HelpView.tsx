@@ -4,20 +4,20 @@ import { HelpCircle, CheckCircle, Smartphone, MousePointer, ShieldCheck } from '
 export const HelpView: React.FC = () => {
   const faqs = [
     {
-      question: 'How do I mark a task as completed?',
-      answer: "Click on the circular radio indicator on the left side of any task card. Clicking it cycles through 'Not Started', 'In Progress', and 'Completed'.",
+      question: '할 일을 완료로 바꾸려면 어떻게 하나요?',
+      answer: "할 일 카드 왼쪽의 동그란 상태 버튼을 누르면 '시작 전', '진행 중', '완료' 순서로 바뀝니다.",
     },
     {
-      question: 'How do I flag a task as Vital?',
-      answer: "Click the three horizontal dots menu on any task card and select 'Mark as Vital', or check the 'Mark as Vital Task' box when creating or editing a task.",
+      question: '중요 할 일은 어떻게 표시하나요?',
+      answer: "카드의 점 세 개 메뉴에서 '중요 표시'를 선택하거나, 할 일을 만들 때 '중요 할 일로 표시'를 체크하면 됩니다.",
     },
     {
-      question: 'How do I toggle between Desktop Mockup and Fullscreen View?',
-      answer: "Click the 'Desk View / Clean View' button in the top right header bar to toggle the realistic workspace backdrop.",
+      question: '배경 보기는 어떻게 바꾸나요?',
+      answer: "오른쪽 상단의 '배경 보기 / 깔끔한 보기' 버튼을 누르면 화면 배경을 전환할 수 있습니다.",
     },
     {
-      question: 'How do I invite team members?',
-      answer: "Click the '+ Invite' pill button next to the avatar stack under the greeting header to send team invitations.",
+      question: '팀원은 어떻게 초대하나요?',
+      answer: "인사말 오른쪽의 '+ 초대' 버튼을 누르면 팀원 초대 창이 열립니다.",
     },
   ];
 
@@ -28,8 +28,8 @@ export const HelpView: React.FC = () => {
           <HelpCircle className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Help & Guidance</h2>
-          <p className="text-xs text-slate-500">Learn how to use your Task Dashboard effectively.</p>
+          <h2 className="text-xl font-bold text-slate-900">도움말</h2>
+          <p className="text-xs text-slate-500">투두리스트를 더 편하게 쓰는 방법을 확인하세요.</p>
         </div>
       </div>
 

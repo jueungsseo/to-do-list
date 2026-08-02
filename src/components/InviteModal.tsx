@@ -15,7 +15,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({
 }) => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState('Product Designer');
+  const [role, setRole] = useState('기획자');
   const [sentSuccess, setSentSuccess] = useState(false);
 
   if (!isOpen) return null;
@@ -49,7 +49,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
             <UserPlus className="w-5 h-5 text-[#FF5F5E]" />
-            <span>Invite Team Member</span>
+            <span>팀원 초대</span>
           </h2>
           <button
             onClick={onClose}
@@ -64,21 +64,21 @@ export const InviteModal: React.FC<InviteModalProps> = ({
             <div className="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center">
               <Check className="w-6 h-6 stroke-[3]" />
             </div>
-            <h3 className="font-bold text-slate-900 text-lg">Invitation Sent!</h3>
+            <h3 className="font-bold text-slate-900 text-lg">초대를 보냈습니다</h3>
             <p className="text-xs text-slate-500">
-              An invite email has been sent to <span className="font-medium text-slate-800">{email}</span>.
+              <span className="font-medium text-slate-800">{email}</span>로 초대 메일을 보냈습니다.
             </p>
           </div>
         ) : (
           <form onSubmit={handleSubmit} className="space-y-4 pt-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Full Name
+                이름
               </label>
               <input
                 type="text"
                 required
-                placeholder="e.g. Jessica Alba"
+                placeholder="예: 김민지"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/30"
@@ -87,7 +87,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Email Address
+                이메일 주소
               </label>
               <div className="relative">
                 <input
@@ -104,18 +104,18 @@ export const InviteModal: React.FC<InviteModalProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1">
-                Role
+                역할
               </label>
               <select
                 value={role}
                 onChange={(e) => setRole(e.target.value)}
                 className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/30 font-medium"
               >
-                <option value="Product Designer">Product Designer</option>
-                <option value="Frontend Engineer">Frontend Engineer</option>
-                <option value="Backend Developer">Backend Developer</option>
-                <option value="Project Manager">Project Manager</option>
-                <option value="QA Lead">QA Lead</option>
+                <option value="기획자">기획자</option>
+                <option value="프론트엔드 개발자">프론트엔드 개발자</option>
+                <option value="백엔드 개발자">백엔드 개발자</option>
+                <option value="프로젝트 매니저">프로젝트 매니저</option>
+                <option value="QA 담당자">QA 담당자</option>
               </select>
             </div>
 
@@ -124,7 +124,7 @@ export const InviteModal: React.FC<InviteModalProps> = ({
                 type="submit"
                 className="w-full py-3 bg-[#FF5F5E] hover:bg-[#ff4a49] text-white font-semibold text-sm rounded-xl transition-colors shadow-sm"
               >
-                Send Invitation
+                초대 보내기
               </button>
             </div>
           </form>

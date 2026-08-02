@@ -21,7 +21,7 @@ export const GreetingSection: React.FC<GreetingSectionProps> = ({
       {/* Greeting Title */}
       <div>
         <h1 className="text-2xl sm:text-3xl font-bold text-slate-900 flex items-center gap-2">
-          <span>Welcome back, {userProfile.name.split(' ')[0]}</span>
+          <span>{userProfile.name.split(' ')[0]}님, 다시 오셨네요</span>
           <span className="text-2xl animate-bounce">👋</span>
         </h1>
       </div>
@@ -50,7 +50,7 @@ export const GreetingSection: React.FC<GreetingSectionProps> = ({
           className="flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#FF5F5E] bg-white border border-[#FF5F5E] rounded-full hover:bg-[#FF5F5E]/10 transition-colors shadow-2xs"
         >
           <UserPlus className="w-3.5 h-3.5" />
-          <span>+ Invite</span>
+          <span>+ 초대</span>
         </button>
       </div>
     </div>

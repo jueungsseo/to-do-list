@@ -70,29 +70,29 @@ export const TaskStatusDonuts: React.FC<TaskStatusDonutsProps> = ({ tasks }) => 
         <div className="p-1.5 rounded-lg bg-[#FF5F5E]/10 text-[#FF5F5E]">
           <PieChart className="w-4 h-4" />
         </div>
-        <h2 className="text-base font-bold text-[#FF5F5E]">Task Status</h2>
+        <h2 className="text-base font-bold text-[#FF5F5E]">할 일 현황</h2>
       </div>
 
       {/* 3 Donut Rings Row */}
       <div className="grid grid-cols-3 gap-2 py-2 items-center justify-items-center">
-        {renderRing(completedPct, '#22C55E', 'Completed')}
-        {renderRing(inProgressPct, '#2563EB', 'In Progress')}
-        {renderRing(notStartedPct, '#EF4444', 'Not Started')}
+        {renderRing(completedPct, '#22C55E', '완료')}
+        {renderRing(inProgressPct, '#2563EB', '진행 중')}
+        {renderRing(notStartedPct, '#EF4444', '시작 전')}
       </div>
 
       {/* Legend Row */}
       <div className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 mt-4 pt-3 border-t border-slate-100 text-xs font-medium text-slate-700">
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
-          <span>Completed</span>
+          <span>완료</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-blue-600" />
-          <span>In Progress</span>
+          <span>진행 중</span>
         </div>
         <div className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-full bg-red-500" />
-          <span>Not Started</span>
+          <span>시작 전</span>
         </div>
       </div>
     </div>

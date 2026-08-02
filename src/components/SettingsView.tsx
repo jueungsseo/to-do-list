@@ -30,8 +30,8 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           <SettingsIcon className="w-5 h-5" />
         </div>
         <div>
-          <h2 className="text-xl font-bold text-slate-900">Settings</h2>
-          <p className="text-xs text-slate-500">Manage your profile details and dashboard preferences.</p>
+          <h2 className="text-xl font-bold text-slate-900">설정</h2>
+          <p className="text-xs text-slate-500">프로필 정보와 대시보드 설정을 관리하세요.</p>
         </div>
       </div>
 
@@ -51,7 +51,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Display Name
+              표시 이름
             </label>
             <input
               type="text"
@@ -64,7 +64,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Email Address
+              이메일 주소
             </label>
             <input
               type="email"
@@ -77,7 +77,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
 
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1">
-              Avatar Image URL
+              프로필 이미지 URL
             </label>
             <input
               type="url"
@@ -96,12 +96,12 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
               {saved ? (
                 <>
                   <Check className="w-4 h-4 stroke-[3]" />
-                  <span>Saved!</span>
+                  <span>저장 완료</span>
                 </>
               ) : (
                 <>
                   <Save className="w-4 h-4" />
-                  <span>Save Profile</span>
+                  <span>프로필 저장</span>
                 </>
               )}
             </button>

@@ -18,6 +18,25 @@ const initialFormData = {
   confirmPassword: '',
 };
 
+const translateAuthMessage = (message) => {
+  const lowerMessage = message.toLowerCase();
+
+  if (lowerMessage.includes('signups not allowed')) {
+    return '현재 회원가입이 허용되어 있지 않습니다. Supabase 설정을 확인해주세요.';
+  }
+  if (lowerMessage.includes('already registered') || lowerMessage.includes('already been registered')) {
+    return '이미 가입된 이메일입니다. 로그인해주세요.';
+  }
+  if (lowerMessage.includes('password')) {
+    return '비밀번호 조건을 확인해주세요.';
+  }
+  if (lowerMessage.includes('rate limit')) {
+    return '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.';
+  }
+
+  return message;
+};
+
 const InputGroup = ({ icon: Icon, name, type = 'text', placeholder, value, onChange }) => {
   return (
     <label className="group flex items-center gap-3 rounded-2xl border border-slate-300 bg-white px-4 py-3.5 transition focus-within:border-[#FF5F5E] focus-within:ring-4 focus-within:ring-[#FF5F5E]/10">
@@ -52,17 +71,17 @@ export const SignUp = ({ onOpenSignIn }) => {
     event.preventDefault();
 
     if (formData.password !== formData.confirmPassword) {
-      setMessage('Passwords do not match.');
+      setMessage('비밀번호가 서로 일치하지 않습니다.');
       return;
     }
 
     if (!agreedToTerms) {
-      setMessage('Please agree to the terms before registering.');
+      setMessage('약관에 동의해야 가입할 수 있습니다.');
       return;
     }
 
     if (!isSupabaseConfigured || !supabase) {
-      setMessage('Supabase environment variables are not configured.');
+      setMessage('Supabase 환경변수가 설정되지 않았습니다.');
       return;
     }
 
@@ -83,7 +102,7 @@ export const SignUp = ({ onOpenSignIn }) => {
 
     if (error) {
       setIsSubmitting(false);
-      setMessage(error.message);
+      setMessage(translateAuthMessage(error.message));
       return;
     }
 
@@ -98,7 +117,7 @@ export const SignUp = ({ onOpenSignIn }) => {
 
       if (profileError) {
         setIsSubmitting(false);
-        setMessage(profileError.message);
+        setMessage('프로필 저장 중 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
         return;
       }
     }
@@ -106,8 +125,8 @@ export const SignUp = ({ onOpenSignIn }) => {
     setIsSubmitting(false);
     setMessage(
       data.session
-        ? 'Registration complete. You can sign in now.'
-        : 'Registration complete. Please check your email, then sign in.'
+        ? '가입이 완료되었습니다. 이제 로그인할 수 있어요.'
+        : '가입이 완료되었습니다. 이메일을 확인한 뒤 로그인해주세요.'
     );
   };
 
@@ -139,28 +158,28 @@ export const SignUp = ({ onOpenSignIn }) => {
         <div className="flex flex-1 items-center p-6 sm:p-10 lg:p-14">
           <form onSubmit={handleSubmit} className="w-full space-y-5">
             <div>
-              <h1 className="text-4xl font-extrabold tracking-normal text-slate-900">Sign Up</h1>
+              <h1 className="text-4xl font-extrabold tracking-normal text-slate-900">회원가입</h1>
             </div>
 
             <div className="space-y-4">
               <InputGroup
                 icon={UserRoundPlus}
                 name="firstName"
-                placeholder="Enter First Name"
+                placeholder="이름을 입력하세요"
                 value={formData.firstName}
                 onChange={handleInputChange}
               />
               <InputGroup
                 icon={Users}
                 name="lastName"
-                placeholder="Enter Last Name"
+                placeholder="성을 입력하세요"
                 value={formData.lastName}
                 onChange={handleInputChange}
               />
               <InputGroup
                 icon={User}
                 name="username"
-                placeholder="Enter Username"
+                placeholder="사용자 이름을 입력하세요"
                 value={formData.username}
                 onChange={handleInputChange}
               />
@@ -168,7 +187,7 @@ export const SignUp = ({ onOpenSignIn }) => {
                 icon={Mail}
                 name="email"
                 type="email"
-                placeholder="Enter Email"
+                placeholder="이메일을 입력하세요"
                 value={formData.email}
                 onChange={handleInputChange}
               />
@@ -176,7 +195,7 @@ export const SignUp = ({ onOpenSignIn }) => {
                 icon={Lock}
                 name="password"
                 type="password"
-                placeholder="Enter Password"
+                placeholder="비밀번호를 입력하세요"
                 value={formData.password}
                 onChange={handleInputChange}
               />
@@ -184,7 +203,7 @@ export const SignUp = ({ onOpenSignIn }) => {
                 icon={AtSign}
                 name="confirmPassword"
                 type="password"
-                placeholder="Confirm Password"
+                placeholder="비밀번호를 한 번 더 입력하세요"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
               />
@@ -197,13 +216,13 @@ export const SignUp = ({ onOpenSignIn }) => {
                 onChange={(event) => setAgreedToTerms(event.target.checked)}
                 className="h-4 w-4 rounded border-slate-300 text-[#FF5F5E] focus:ring-[#FF5F5E]"
               />
-              <span>I agree to all terms</span>
+              <span>이용약관에 동의합니다</span>
             </label>
 
             {message && (
               <p
                 className={`text-sm font-semibold ${
-                  message.includes('ready') ? 'text-emerald-600' : 'text-red-500'
+                  message.includes('완료') ? 'text-emerald-600' : 'text-red-500'
                 }`}
               >
                 {message}
@@ -215,17 +234,17 @@ export const SignUp = ({ onOpenSignIn }) => {
               disabled={isSubmitting}
               className="rounded-xl bg-[#FF8585] px-9 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#FF5F5E] focus:outline-none focus:ring-4 focus:ring-[#FF5F5E]/25"
             >
-              {isSubmitting ? 'Registering...' : 'Register'}
+              {isSubmitting ? '가입 처리 중...' : '가입하기'}
             </button>
 
             <p className="text-sm font-medium text-slate-800">
-              Already have an account?{' '}
+              이미 계정이 있나요?{' '}
               <button
                 type="button"
                 onClick={onOpenSignIn}
                 className="font-semibold text-[#008FE8] hover:text-[#006EB8]"
               >
-                Sign In
+                로그인
               </button>
             </p>
           </form>

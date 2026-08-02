@@ -17,11 +17,19 @@ const toDateKey = (date: Date) => {
 };
 
 const formatDate = (dateKey: string) =>
-  new Date(`${dateKey}T00:00:00`).toLocaleDateString('en-US', {
+  new Date(`${dateKey}T00:00:00`).toLocaleDateString('ko-KR', {
     month: 'long',
     day: 'numeric',
     year: 'numeric',
   });
+
+const categoryLabels: Record<Task['category'], string> = {
+  Work: '업무',
+  Personal: '개인',
+  Design: '디자인',
+  Meeting: '회의',
+  Event: '이벤트',
+};
 
 export const CalendarPanel: React.FC<CalendarPanelProps> = ({
   isOpen,
@@ -37,10 +45,10 @@ export const CalendarPanel: React.FC<CalendarPanelProps> = ({
 
   if (!isOpen) return null;
 
-  const days = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const days = ['일', '월', '화', '수', '목', '금', '토'];
   const year = visibleMonth.getFullYear();
   const month = visibleMonth.getMonth();
-  const monthLabel = visibleMonth.toLocaleDateString('en-US', {
+  const monthLabel = visibleMonth.toLocaleDateString('ko-KR', {
     month: 'long',
     year: 'numeric',
   });
@@ -65,14 +73,14 @@ export const CalendarPanel: React.FC<CalendarPanelProps> = ({
           <button
             onClick={() => changeMonth(-1)}
             className="p-1 text-slate-400 hover:text-slate-600 rounded"
-            aria-label="Previous month"
+            aria-label="이전 달"
           >
             <ChevronLeft className="w-4 h-4" />
           </button>
           <button
             onClick={() => changeMonth(1)}
             className="p-1 text-slate-400 hover:text-slate-600 rounded"
-            aria-label="Next month"
+            aria-label="다음 달"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
@@ -128,7 +136,7 @@ export const CalendarPanel: React.FC<CalendarPanelProps> = ({
       <div className="mt-3 border-t border-slate-100 pt-3">
         <div className="flex items-center justify-between gap-3">
           <div className="text-[11px] text-slate-500 font-medium">
-            Selected Date:
+            선택한 날짜:
             <strong className="ml-1 text-slate-800">{formatDate(selectedDate)}</strong>
           </div>
           <button
@@ -136,14 +144,14 @@ export const CalendarPanel: React.FC<CalendarPanelProps> = ({
             className="inline-flex items-center gap-1 rounded-lg bg-[#FF5F5E] px-2.5 py-1.5 text-[11px] font-bold text-white hover:bg-[#ff4a49]"
           >
             <Plus className="h-3 w-3" />
-            Add
+            추가
           </button>
         </div>
 
         <div className="mt-3 max-h-36 space-y-2 overflow-y-auto pr-1">
           {selectedTasks.length === 0 ? (
             <div className="rounded-xl bg-slate-50 px-3 py-3 text-center text-xs font-medium text-slate-400">
-              No schedules for this date.
+              선택한 날짜에 등록된 일정이 없습니다.
             </div>
           ) : (
             selectedTasks.map((task) => (
@@ -161,7 +169,7 @@ export const CalendarPanel: React.FC<CalendarPanelProps> = ({
                   />
                 </div>
                 <p className="mt-1 line-clamp-2 text-[11px] text-slate-500">
-                  {task.description || task.category}
+                  {task.description || categoryLabels[task.category]}
                 </p>
               </div>
             ))

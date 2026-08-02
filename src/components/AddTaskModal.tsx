@@ -12,26 +12,34 @@ interface AddTaskModalProps {
 
 const PRESET_IMAGES = [
   {
-    name: 'Party / Birthday',
+    name: '파티 / 생일',
     url: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?auto=format&fit=crop&w=300&q=80',
   },
   {
-    name: 'Design / Laptop',
+    name: '디자인 / 노트북',
     url: 'https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=300&q=80',
   },
   {
-    name: 'Presentation',
+    name: '발표',
     url: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?auto=format&fit=crop&w=300&q=80',
   },
   {
-    name: 'Dog / Park',
+    name: '반려동물 / 산책',
     url: 'https://images.unsplash.com/photo-1552053831-71594a27632d?auto=format&fit=crop&w=300&q=80',
   },
   {
-    name: 'Office Meeting',
+    name: '업무 회의',
     url: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=300&q=80',
   },
 ];
+
+const categoryLabels: Record<TaskCategory, string> = {
+  Work: '업무',
+  Personal: '개인',
+  Design: '디자인',
+  Meeting: '회의',
+  Event: '이벤트',
+};
 
 export const AddTaskModal: React.FC<AddTaskModalProps> = ({
   isOpen,
@@ -111,7 +119,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
         {/* Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-100">
           <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <span className="text-[#FF5F5E]">{taskToEdit ? 'Edit' : 'Create New'}</span> Task
+            <span className="text-[#FF5F5E]">{taskToEdit ? '할 일 수정' : '새 할 일 만들기'}</span>
           </h2>
           <button
             onClick={onClose}
@@ -126,12 +134,12 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
           {/* Title */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Task Title *
+              제목 *
             </label>
             <input
               type="text"
               required
-              placeholder="e.g. Landing Page Design for TravelDays"
+              placeholder="예: 여행 서비스 랜딩 페이지 디자인"
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/30"
@@ -141,7 +149,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
           {/* Schedule Date */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Date
+              일정 날짜
             </label>
             <div className="relative">
               <input
@@ -158,11 +166,11 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             {/* Description */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Task Description
+                설명
               </label>
               <textarea
                 rows={8}
-                placeholder="Start writing here..."
+                placeholder="할 일 내용을 입력하세요..."
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 className="w-full h-48 px-3.5 py-2.5 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/30 resize-none"
@@ -172,22 +180,22 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             {/* Upload Image */}
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Upload Image
+                이미지 업로드
               </label>
               <label className="flex h-48 cursor-pointer flex-col items-center justify-center rounded-xl border border-slate-200 bg-slate-50 text-center transition hover:border-[#FF5F5E]/50 hover:bg-[#FF5F5E]/5">
                 {imageUrl ? (
                   <img
                     src={imageUrl}
-                    alt="Selected task"
+                    alt="선택한 할 일 이미지"
                     className="h-full w-full rounded-xl object-cover"
                   />
                 ) : (
                   <div className="flex flex-col items-center gap-2 px-4 text-slate-400">
                     <UploadCloud className="w-10 h-10" />
-                    <span className="text-xs font-medium">Drag & drop files here</span>
-                    <span className="text-[11px]">or</span>
+                    <span className="text-xs font-medium">이미지를 끌어다 놓으세요</span>
+                    <span className="text-[11px]">또는</span>
                     <span className="rounded-lg border border-slate-300 bg-white px-3 py-1 text-xs font-semibold text-slate-500">
-                      Browse
+                      찾아보기
                     </span>
                   </div>
                 )}
@@ -200,32 +208,32 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
           <div className="grid grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Priority
+                우선순위
               </label>
               <select
                 value={priority}
                 onChange={(e) => setPriority(e.target.value as Priority)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/30"
               >
-                <option value="Low">Low</option>
-                <option value="Moderate">Moderate</option>
-                <option value="High">High</option>
-                <option value="Vital">Vital</option>
+                <option value="Low">낮음</option>
+                <option value="Moderate">보통</option>
+                <option value="High">높음</option>
+                <option value="Vital">중요</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-                Status
+                상태
               </label>
               <select
                 value={status}
                 onChange={(e) => setStatus(e.target.value as TaskStatus)}
                 className="w-full px-3 py-2 rounded-xl border border-slate-200 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#FF5F5E]/30"
               >
-                <option value="Not Started">Not Started</option>
-                <option value="In Progress">In Progress</option>
-                <option value="Completed">Completed</option>
+                <option value="Not Started">시작 전</option>
+                <option value="In Progress">진행 중</option>
+                <option value="Completed">완료</option>
               </select>
             </div>
           </div>
@@ -233,7 +241,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
           {/* Category */}
           <div>
             <label className="block text-xs font-semibold text-slate-700 mb-1.5">
-              Category
+              카테고리
             </label>
             <div className="flex flex-wrap gap-2">
               {(['Work', 'Personal', 'Design', 'Meeting', 'Event'] as TaskCategory[]).map(
@@ -248,7 +256,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
                         : 'bg-slate-50 text-slate-600 border-slate-200 hover:bg-slate-100'
                     }`}
                   >
-                    {cat}
+                    {categoryLabels[cat]}
                   </button>
                 )
               )}
@@ -260,9 +268,9 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             <label className="block text-xs font-semibold text-slate-700 mb-1.5 flex items-center justify-between">
               <span className="flex items-center gap-1">
                 <ImageIcon className="w-3.5 h-3.5 text-slate-500" />
-                Thumbnail Image URL
+                썸네일 이미지 URL
               </span>
-              <span className="text-[10px] text-slate-400">Optional</span>
+              <span className="text-[10px] text-slate-400">선택 사항</span>
             </label>
             <input
               type="url"
@@ -275,7 +283,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             {/* Presets */}
             <div className="mt-2.5">
               <p className="text-[11px] text-slate-500 mb-1.5 font-medium">
-                Or pick a preset thumbnail:
+                또는 기본 이미지를 선택하세요:
               </p>
               <div className="flex gap-2 overflow-x-auto pb-1">
                 {PRESET_IMAGES.map((preset) => (
@@ -308,7 +316,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
             />
             <label htmlFor="isVital" className="text-xs font-medium text-slate-700 flex items-center gap-1 cursor-pointer">
               <Sparkles className="w-3.5 h-3.5 text-amber-500" />
-              Mark as Vital Task (Show in Vital Task tab)
+              중요 할 일로 표시
             </label>
           </div>
 
@@ -318,7 +326,7 @@ export const AddTaskModal: React.FC<AddTaskModalProps> = ({
               type="submit"
               className="w-full py-3 bg-[#FF5F5E] hover:bg-[#ff4a49] text-white font-semibold text-sm rounded-xl transition-colors shadow-sm"
             >
-              {taskToEdit ? 'Save Changes' : 'Add Task'}
+              {taskToEdit ? '변경사항 저장' : '할 일 추가'}
             </button>
           </div>
         </form>

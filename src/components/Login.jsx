@@ -7,6 +7,22 @@ const initialFormData = {
   password: '',
 };
 
+const translateAuthMessage = (message) => {
+  const lowerMessage = message.toLowerCase();
+
+  if (lowerMessage.includes('invalid login credentials')) {
+    return '이메일 또는 비밀번호가 올바르지 않습니다.';
+  }
+  if (lowerMessage.includes('email not confirmed')) {
+    return '이메일 인증을 완료한 뒤 로그인해주세요.';
+  }
+  if (lowerMessage.includes('rate limit')) {
+    return '요청이 너무 많습니다. 잠시 후 다시 시도해주세요.';
+  }
+
+  return message;
+};
+
 const InputGroup = ({ icon: Icon, name, type = 'text', placeholder, value, onChange }) => {
   return (
     <label className="group flex items-center gap-4 rounded-xl border border-slate-400 bg-white px-4 py-4 transition focus-within:border-[#FF5F5E] focus-within:ring-4 focus-within:ring-[#FF5F5E]/10">
@@ -41,12 +57,12 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
     event.preventDefault();
 
     if (!formData.email.trim() || !formData.password.trim()) {
-      setMessage('Please enter your email and password.');
+      setMessage('이메일과 비밀번호를 입력해주세요.');
       return;
     }
 
     if (!isSupabaseConfigured || !supabase) {
-      setMessage('Supabase environment variables are not configured.');
+      setMessage('Supabase 환경변수가 설정되지 않았습니다.');
       return;
     }
 
@@ -61,7 +77,7 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
     setIsSubmitting(false);
 
     if (error) {
-      setMessage(error.message);
+      setMessage(translateAuthMessage(error.message));
       return;
     }
 
@@ -73,14 +89,14 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
       <section className="mx-auto flex min-h-[720px] max-w-6xl flex-col overflow-hidden rounded-xl bg-white shadow-2xl lg:flex-row">
         <div className="flex flex-1 items-center p-8 sm:p-12 lg:p-14">
           <form onSubmit={handleSubmit} className="w-full max-w-xl space-y-6">
-            <h1 className="text-4xl font-extrabold tracking-normal text-slate-900">Sign In</h1>
+            <h1 className="text-4xl font-extrabold tracking-normal text-slate-900">로그인</h1>
 
             <div className="space-y-5">
               <InputGroup
                 icon={Mail}
                 name="email"
                 type="email"
-                placeholder="Enter Email"
+                placeholder="이메일을 입력하세요"
                 value={formData.email}
                 onChange={handleInputChange}
               />
@@ -88,7 +104,7 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
                 icon={Lock}
                 name="password"
                 type="password"
-                placeholder="Enter Password"
+                placeholder="비밀번호를 입력하세요"
                 value={formData.password}
                 onChange={handleInputChange}
               />
@@ -101,7 +117,7 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
                 onChange={(event) => setRememberMe(event.target.checked)}
                 className="h-4 w-4 rounded border-slate-300 text-[#FF5F5E] focus:ring-[#FF5F5E]"
               />
-              <span>Remember Me</span>
+              <span>로그인 상태 유지</span>
             </label>
 
             {message && <p className="text-sm font-semibold text-red-500">{message}</p>}
@@ -111,35 +127,35 @@ export const Login = ({ onLogin, onOpenSignUp }) => {
               disabled={isSubmitting}
               className="rounded-lg bg-[#FF8585] px-10 py-4 text-sm font-bold text-white shadow-sm transition hover:bg-[#FF5F5E] focus:outline-none focus:ring-4 focus:ring-[#FF5F5E]/25"
             >
-              {isSubmitting ? 'Logging in...' : 'Login'}
+              {isSubmitting ? '로그인 중...' : '로그인'}
             </button>
 
             <div className="space-y-3 pt-10">
               <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-slate-800">
-                <span>Or, Login with</span>
-                <button type="button" className="text-[#3B5998]" aria-label="Login with Facebook">
+                <span>간편 로그인</span>
+                <button type="button" className="text-[#3B5998]" aria-label="페이스북으로 로그인">
                   <Facebook className="h-7 w-7 fill-current" />
                 </button>
-                <button type="button" className="font-bold text-[#4285F4]" aria-label="Login with Google">
+                <button type="button" className="font-bold text-[#4285F4]" aria-label="구글로 로그인">
                   G
                 </button>
                 <button
                   type="button"
                   className="grid h-7 w-7 place-items-center rounded-md bg-black text-white"
-                  aria-label="Login with X"
+                  aria-label="X로 로그인"
                 >
                   <X className="h-4 w-4" />
                 </button>
               </div>
 
               <p className="text-sm font-medium text-slate-800">
-                Don&apos;t have an account?{' '}
+                아직 계정이 없나요?{' '}
                 <button
                   type="button"
                   onClick={onOpenSignUp}
                   className="font-semibold text-[#008FE8] hover:text-[#006EB8]"
                 >
-                  Create One
+                  회원가입
                 </button>
               </p>
             </div>
