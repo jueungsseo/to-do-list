@@ -234,16 +234,6 @@ export default function App() {
           : undefined
       }
     >
-      {/* Decorative Clipboard Visual Props for Desk Mode */}
-      {showDeskFrame && (
-        <>
-          {/* Clipboard on left backdrop representation */}
-          <div className="hidden xl:block absolute left-4 top-1/2 -translate-y-1/2 w-48 h-80 bg-[#D8C4B6] opacity-30 rounded-2xl rotate-[-8deg] pointer-events-none shadow-2xl" />
-          {/* Keyboard edge right backdrop */}
-          <div className="hidden xl:block absolute right-4 top-1/2 -translate-y-1/2 w-64 h-96 bg-slate-800 opacity-30 rounded-3xl rotate-[6deg] pointer-events-none shadow-2xl" />
-        </>
-      )}
-
       {/* Main Application Outer Container */}
       <div
         className={`w-full max-w-7xl bg-[#F0F3F8] flex flex-col lg:flex-row transition-all duration-300 ${
