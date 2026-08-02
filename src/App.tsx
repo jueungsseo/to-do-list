@@ -28,10 +28,59 @@ import type { User } from '@supabase/supabase-js';
 const DEFAULT_AVATAR_URL =
   'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=200&q=80';
 
+type TaskRow = {
+  id: string;
+  title: string;
+  description: string | null;
+  priority: Task['priority'];
+  status: TaskStatus;
+  category: Task['category'];
+  due_date: string | null;
+  image_url: string | null;
+  is_vital: boolean;
+  completed_at: string | null;
+  created_at: string;
+};
+
+const formatDisplayDate = (dateValue?: string | null) => {
+  if (!dateValue) return '';
+
+  return new Date(dateValue).toLocaleDateString('en-GB');
+};
+
+const getCompletedLabel = (completedAt?: string | null) => {
+  if (!completedAt) return undefined;
+
+  const completedDate = new Date(completedAt);
+  const diffMs = Date.now() - completedDate.getTime();
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+  if (diffDays <= 0) return '오늘 완료했습니다.';
+  if (diffDays === 1) return '어제 완료했습니다.';
+  return `${diffDays}일 전에 완료했습니다.`;
+};
+
+const mapTaskRowToTask = (row: TaskRow): Task => ({
+  id: row.id,
+  title: row.title,
+  description: row.description || '',
+  priority: row.priority,
+  status: row.status,
+  category: row.category,
+  createdOn: formatDisplayDate(row.created_at),
+  dueDate: row.due_date || undefined,
+  completedOn: formatDisplayDate(row.completed_at),
+  timeAgo: getCompletedLabel(row.completed_at),
+  imageUrl: row.image_url || undefined,
+  isVital: row.is_vital,
+});
+
 export default function App() {
   const [isAuthLoading, setIsAuthLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [tasks, setTasks] = useState<Task[]>(initialTasks);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
+  const [isTasksLoading, setIsTasksLoading] = useState(false);
   const [userProfile, setUserProfile] = useState<UserProfile>(initialUserProfile);
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>(initialTeamMembers);
   const [notifications, setNotifications] = useState(initialNotifications);
@@ -82,6 +131,30 @@ export default function App() {
     });
   };
 
+  const loadTasks = async (userId: string) => {
+    if (!supabase) return;
+
+    setIsTasksLoading(true);
+
+    const { data, error } = await supabase
+      .from('tasks')
+      .select(
+        'id, title, description, priority, status, category, due_date, image_url, is_vital, completed_at, created_at'
+      )
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) {
+      console.error('할 일을 불러오지 못했습니다.', error);
+      setTasks([]);
+      setIsTasksLoading(false);
+      return;
+    }
+
+    setTasks((data || []).map((row) => mapTaskRowToTask(row as TaskRow)));
+    setIsTasksLoading(false);
+  };
+
   useEffect(() => {
     if (!supabase) {
       setIsAuthLoading(false);
@@ -91,7 +164,9 @@ export default function App() {
     supabase.auth.getSession().then(async ({ data }) => {
       setIsAuthenticated(Boolean(data.session));
       if (data.session?.user) {
+        setCurrentUser(data.session.user);
         await syncUserProfile(data.session.user);
+        await loadTasks(data.session.user.id);
       }
       setIsAuthLoading(false);
     });
@@ -101,9 +176,13 @@ export default function App() {
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(Boolean(session));
       if (session?.user) {
+        setCurrentUser(session.user);
         syncUserProfile(session.user);
+        loadTasks(session.user.id);
       } else {
+        setCurrentUser(null);
         setUserProfile(initialUserProfile);
+        setTasks([]);
       }
     });
 
@@ -111,48 +190,141 @@ export default function App() {
   }, []);
 
   // Task Handlers
-  const handleSaveTask = (taskData: Omit<Task, 'id' | 'createdOn'> & { id?: string }) => {
-    if (taskData.id) {
-      // Edit
-      setTasks((prev) =>
-        prev.map((t) => (t.id === taskData.id ? { ...t, ...taskData } : t))
-      );
-    } else {
-      // Create new
-      const newTask: Task = {
-        ...taskData,
-        id: `task-${Date.now()}`,
-        createdOn: new Date().toLocaleDateString('en-GB'), // e.g. "20/06/2023"
-      };
-      setTasks((prev) => [newTask, ...prev]);
+  const handleSaveTask = async (taskData: Omit<Task, 'id' | 'createdOn'> & { id?: string }) => {
+    if (!supabase || !currentUser) {
+      return;
     }
+
+    const completedAt = taskData.status === 'Completed' ? new Date().toISOString() : null;
+
+    const taskPayload = {
+      title: taskData.title,
+      description: taskData.description,
+      due_date: taskData.dueDate || null,
+      priority: taskData.priority,
+      status: taskData.status,
+      category: taskData.category,
+      image_url: taskData.imageUrl || null,
+      is_vital: Boolean(taskData.isVital),
+      completed_at: completedAt,
+    };
+
+    if (taskData.id) {
+      const { data, error } = await supabase
+        .from('tasks')
+        .update(taskPayload)
+        .eq('id', taskData.id)
+        .eq('user_id', currentUser.id)
+        .select(
+          'id, title, description, priority, status, category, due_date, image_url, is_vital, completed_at, created_at'
+        )
+        .single();
+
+      if (error) {
+        console.error('할 일을 수정하지 못했습니다.', error);
+        return;
+      }
+
+      const updatedTask = mapTaskRowToTask(data as TaskRow);
+      setTasks((prev) => prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
+    } else {
+      const { data, error } = await supabase
+        .from('tasks')
+        .insert({
+          ...taskPayload,
+          user_id: currentUser.id,
+        })
+        .select(
+          'id, title, description, priority, status, category, due_date, image_url, is_vital, completed_at, created_at'
+        )
+        .single();
+
+      if (error) {
+        console.error('할 일을 저장하지 못했습니다.', error);
+        return;
+      }
+
+      setTasks((prev) => [mapTaskRowToTask(data as TaskRow), ...prev]);
+    }
+
     setNewTaskDueDate('');
   };
 
-  const handleUpdateStatus = (taskId: string, newStatus: TaskStatus) => {
-    setTasks((prev) =>
-      prev.map((t) => {
-        if (t.id === taskId) {
-          return {
-            ...t,
-            status: newStatus,
-            completedOn: newStatus === 'Completed' ? new Date().toLocaleDateString('en-GB') : undefined,
-            timeAgo: newStatus === 'Completed' ? '방금 완료했습니다.' : undefined,
-          };
-        }
-        return t;
+  const handleUpdateStatus = async (taskId: string, newStatus: TaskStatus) => {
+    if (!supabase || !currentUser) {
+      return;
+    }
+
+    const completedAt = newStatus === 'Completed' ? new Date().toISOString() : null;
+
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({
+        status: newStatus,
+        completed_at: completedAt,
       })
+      .eq('id', taskId)
+      .eq('user_id', currentUser.id)
+      .select(
+        'id, title, description, priority, status, category, due_date, image_url, is_vital, completed_at, created_at'
+      )
+      .single();
+
+    if (error) {
+      console.error('할 일 상태를 변경하지 못했습니다.', error);
+      return;
+    }
+
+    const updatedTask = mapTaskRowToTask(data as TaskRow);
+    setTasks((prev) =>
+      prev.map((task) => (task.id === updatedTask.id ? updatedTask : task))
     );
   };
 
-  const handleDeleteTask = (taskId: string) => {
+  const handleDeleteTask = async (taskId: string) => {
+    if (!supabase || !currentUser) {
+      return;
+    }
+
+    const { error } = await supabase
+      .from('tasks')
+      .delete()
+      .eq('id', taskId)
+      .eq('user_id', currentUser.id);
+
+    if (error) {
+      console.error('할 일을 삭제하지 못했습니다.', error);
+      return;
+    }
+
     setTasks((prev) => prev.filter((t) => t.id !== taskId));
   };
 
-  const handleToggleVital = (taskId: string) => {
-    setTasks((prev) =>
-      prev.map((t) => (t.id === taskId ? { ...t, isVital: !t.isVital } : t))
-    );
+  const handleToggleVital = async (taskId: string) => {
+    if (!supabase || !currentUser) {
+      return;
+    }
+
+    const targetTask = tasks.find((task) => task.id === taskId);
+    if (!targetTask) return;
+
+    const { data, error } = await supabase
+      .from('tasks')
+      .update({ is_vital: !targetTask.isVital })
+      .eq('id', taskId)
+      .eq('user_id', currentUser.id)
+      .select(
+        'id, title, description, priority, status, category, due_date, image_url, is_vital, completed_at, created_at'
+      )
+      .single();
+
+    if (error) {
+      console.error('중요 할 일 설정을 변경하지 못했습니다.', error);
+      return;
+    }
+
+    const updatedTask = mapTaskRowToTask(data as TaskRow);
+    setTasks((prev) => prev.map((task) => (task.id === updatedTask.id ? updatedTask : task)));
   };
 
   const handleAddMember = (member: Omit<TeamMember, 'id'>) => {
@@ -188,7 +360,9 @@ export default function App() {
   const handleLogin = async ({ user }: { user?: User | null } = {}) => {
     setIsAuthenticated(true);
     if (user) {
+      setCurrentUser(user);
       await syncUserProfile(user);
+      await loadTasks(user.id);
     }
     setActiveTab('dashboard');
   };
@@ -199,7 +373,9 @@ export default function App() {
     }
 
     setIsAuthenticated(false);
+    setCurrentUser(null);
     setUserProfile(initialUserProfile);
+    setTasks([]);
     setActiveTab('dashboard');
     setSearchQuery('');
     setIsMobileSidebarOpen(false);
@@ -340,7 +516,7 @@ export default function App() {
                   {/* To-Do Task Cards List */}
                   {todoTasks.length === 0 ? (
                     <div className="py-10 text-center text-slate-400 text-xs">
-                      아직 해야 할 일이 없습니다.
+                      {isTasksLoading ? '할 일을 불러오는 중입니다...' : '아직 해야 할 일이 없습니다.'}
                     </div>
                   ) : (
                     <div className="space-y-3.5">
@@ -380,7 +556,7 @@ export default function App() {
                     {/* Completed Task Cards List */}
                     {completedTasks.length === 0 ? (
                       <div className="py-8 text-center text-slate-400 text-xs">
-                        완료한 일이 아직 없습니다.
+                        {isTasksLoading ? '할 일을 불러오는 중입니다...' : '완료한 일이 아직 없습니다.'}
                       </div>
                     ) : (
                       <div className="space-y-3.5">
