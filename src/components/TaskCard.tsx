@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MoreHorizontal, Check, Edit2, Trash2, Star, CheckCircle2 } from 'lucide-react';
+import { MoreHorizontal, Check, Edit2, Trash2, Star, Eye } from 'lucide-react';
 import { Task, TaskStatus } from '../types';
 
 interface TaskCardProps {
@@ -101,7 +101,7 @@ export const TaskCard: React.FC<TaskCardProps> = ({
             <button
               type="button"
               onClick={() => onOpenTask?.(task)}
-              className="min-w-0 truncate pr-2 text-left text-base font-bold leading-snug text-slate-900 transition-colors hover:text-[#FF5F5E] disabled:cursor-default disabled:hover:text-slate-900"
+              className="block max-w-full min-w-0 cursor-pointer truncate pr-2 text-left text-base font-bold leading-snug text-slate-900 transition-colors hover:text-[#FF5F5E] disabled:cursor-default disabled:hover:text-slate-900"
               disabled={!onOpenTask}
               title={onOpenTask ? '상세 보기' : undefined}
             >
@@ -121,6 +121,19 @@ export const TaskCard: React.FC<TaskCardProps> = ({
               {/* Context Dropdown */}
               {showMenu && (
                 <div className="absolute right-0 top-6 w-44 bg-white rounded-xl shadow-lg border border-slate-100 py-1.5 z-20 text-xs">
+                  {onOpenTask && (
+                    <button
+                      onClick={() => {
+                        onOpenTask(task);
+                        setShowMenu(false);
+                      }}
+                      className="w-full flex items-center gap-2 px-3 py-2 text-slate-700 hover:bg-slate-50 hover:text-slate-900"
+                    >
+                      <Eye className="w-3.5 h-3.5 text-slate-500" />
+                      <span>상세 보기</span>
+                    </button>
+                  )}
+
                   <button
                     onClick={() => {
                       onEditTask(task);
